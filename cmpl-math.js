@@ -130,10 +130,10 @@
     return z[1];
   }
   
-  function dsp(a){
-    if (a == "")return a;
-    var re = A(a);
-    var b = B(a);
+  function dsp(z){
+    if (z == "")return z;
+    var re = A(z);
+    var b = B(z);
     var im = absr(b);
     switch (im){
       case "0": return re;
@@ -428,6 +428,11 @@
     cei: cei,
     flr: flr,
     trn: trn,
+    
+    round: rnd,
+    ceil: cei,
+    floor: flr,
+    trunc: trn,
     
     exp: exp,
     ln: ln,
