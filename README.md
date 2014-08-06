@@ -33,13 +33,17 @@ See http://xinxinw1.github.io/cmpl-math/ for a demo.
 ## Function reference
 
 ```
-Note: There are a couple of functions that exist, but haven't been documented yet
+Note: There are a couple of functions that exist, but haven't been
+  documented yet
 
 Note 2: These are all accessed by C.<insert name>
 
-Note 3: To set the default precision, see the reference for [xinxinw1/prec-math](https://github.com/xinxinw1/prec-math)
+Note 3: To set the default precision, see the reference for
+  https://github.com/xinxinw1/prec-math
 
-Conventions: z and w are always regular complex numbers like ["3.4", "-1"], x and y are real numbers like "4.5" and "-234", n is always a real integer like "5", and p is always a js integer like 456
+Conventions: z and w are always regular complex numbers like ["3.4", "-1"],
+  x and y are real numbers like "4.5" and "-234", n is always a real integer 
+  like "5", and p is always a js integer like 456
 
 ### Complex number functions
 
