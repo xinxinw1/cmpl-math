@@ -1,10 +1,12 @@
-/***** Complex Number Math Library 1.0 *****/
+/***** Complex Number Math Library 1.1.0 *****/
 
-/* require tools 4.0 */
-/* require prec-math 4.0 */
+/* require tools 4.0 - 4.1.5 */
+/* require prec-math 4.0 - 4.2.1 */
 
-(function (win, udf){
+(function (udf){
   ////// Import //////
+  
+  var nodep = $.nodep;
   
   var arrp = $.arrp;
   var len = $.len;
@@ -60,8 +62,8 @@
   var ln5r = R.ln5;
   var ln10r = R.ln10;
   
-  var prec = PMath.gprec;
-  var log = PMath.log;
+  var prec = R.gprec;
+  var log = R.log;
   
   ////// Javascript number constants //////
   
@@ -400,7 +402,7 @@
   
   //// C object exposure ////
   
-  win.C = {
+  var C = {
     cmpl: cmpl,
     cmplreal: cmplreal,
     real: real,
@@ -456,6 +458,9 @@
     ln10: ln10
   };
   
+  if (nodep)module.exports = C;
+  else window.C = C;
+  
   ////// Speed tests //////
   
   function a(){
@@ -473,4 +478,4 @@
   
   
   
-})(window);
+})();
