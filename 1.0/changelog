@@ -1,5 +1,0 @@
-Complex Number Math Library 1.0 - Jul 15, 2014 14:47
-
-- split complex number functions from prec-math
-- renames include
-    getA -> A
