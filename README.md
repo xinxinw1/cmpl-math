@@ -9,11 +9,13 @@ An complex number math library that works in both web js and Node.js.
 3. Go to https://github.com/xinxinw1/cmpl-math/releases and download the latest release.
 4. Extract `tools.js` from the first download, `prec-math.js` from the second, and `cmpl-math.js` from the third into your project directory.
 5. Add
+   
    ```html
    <script src="tools.js"></script>
    <script src="prec-math.js"></script>
    <script src="cmpl-math.js"></script>
    ```
+   
    to your html file.
 6. Run `$.al(C.mul(C.num("326083431910576", "53943061760287"), C.num("2176454902834", "756240659123")))` to make sure it works. (Should output ["668911947533997805551324083", "364002190719197789019538206"])
 
@@ -138,3 +140,4 @@ phi(p)            the golden ratio
 ln2(p)            ln(2)
 ln5(p)            ln(5)
 ln10(p)           ln(10)
+```
