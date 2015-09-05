@@ -1,4 +1,4 @@
-/***** Complex Number Math Library 1.2.1 *****/
+/***** Complex Number Math Library 1.2.2 *****/
 
 /* require tools 4.1.5 */
 /* require prec-math 4.2.1 */
