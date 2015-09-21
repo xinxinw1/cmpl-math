@@ -1,4 +1,4 @@
-/***** Complex Number Math Library 1.2.2 *****/
+/***** Complex Number Math Library 1.2.3 *****/
 
 /* require tools 4.1.5 */
 /* require prec-math 4.2.1 */
@@ -16,6 +16,8 @@
   
   var al = $.al;
   var spd = $.spd;
+  
+  var err = $.err;
   
   var realr = R.real;
   var realintr = R.realint;
