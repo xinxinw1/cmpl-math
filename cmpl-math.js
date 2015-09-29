@@ -1,4 +1,4 @@
-/***** Complex Number Math Library 1.2.3 *****/
+/***** Complex Number Math Library 1.2.4 *****/
 
 /* require tools 4.1.5 */
 /* require prec-math 4.2.1 */
@@ -257,7 +257,7 @@
       return N(powr(a, c, p), "0");
     }
     
-    var n = Math.abs(num(c))*siz(str(Math.abs(num(a))+Math.abs(num(b))))+2*Math.abs(num(d));
+    var n = Math.ceil(Math.abs(num(c))*siz(str(Math.abs(num(a))+Math.abs(num(b))))+2*Math.abs(num(d)));
     
     var pd = mul(w, ln(z, p+n+4), p+n+2);
     return exp(pd, p);
