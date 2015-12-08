@@ -1,7 +1,7 @@
-/***** Complex Number Math Library 1.2.4 *****/
+/***** Complex Number Math Library 2.0.0 *****/
 
-/* require tools 4.1.5 */
-/* require prec-math 4.2.1 */
+/* require tools 4.10.3 */
+/* require prec-math 5.0.0 */
 
 (function (udf){
   ////// Import //////
