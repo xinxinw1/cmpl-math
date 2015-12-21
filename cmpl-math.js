@@ -6,10 +6,10 @@
 (function (udf){
   ////// Import //////
   
+  var nodep = $.nodep;
+  var inf = Infinity;
   var num = Number;
   var str = String;
-  
-  var nodep = $.nodep;
   
   var typ = $.T.typ;
   var isa = $.T.isa;
@@ -20,6 +20,8 @@
   var len = $.len_;
   var las = $.las_;
   var sli = $.sliStr;
+  
+  var apl = $.apl;
   
   var err = $.err;
   
@@ -35,6 +37,8 @@
   var trimr = R.trim;
   var siz = R.siz;
   var nsiz = R.nsiz;
+  var wnegr = R.wneg;
+  var byzeror = R.byzero;
   
   var zeror = R.zero;
   var oner = R.one;
@@ -45,6 +49,7 @@
   var onepr = R.onep;
   var negpr = R.negp;
   var intpr = R.intp;
+  var oddpr = R.oddp;
   
   var absr = R.abs;
   var negr = R.neg;
@@ -65,10 +70,14 @@
   var sqrtr = R.sqrt;
   var sinr = R.sin;
   var cosr = R.cos;
-  var atanr = R.atan;
-  var atan2r = R.atan2;
   var sinhr = R.sinh;
   var coshr = R.cosh;
+  
+  var atanr = R.atan;
+  var atan2r = R.atan2;
+  
+  var factr = R.fact;
+  var binr = R.bin;
   
   var pir = R.pi;
   var er = R.e;
@@ -187,18 +196,44 @@
     return z.b;
   }
   
-  function zero(){
-    return N(zeror(), zeror());
+  function Nreal(a){
+    return N(a, zeror());
   }
 
+  function zero(){
+    return Nreal(zeror());
+  }
+  
+  function one(){
+    return Nreal(oner());
+  }
+  
+  function half(){
+    return Nreal(halfr());
+  }
+  
   function cmplp(a){
     return tagp(a) && isa("cmpl", a);
+  }
+  
+  function mkrealfn(f){
+    return function (){
+      return Nreal(apl(f, arguments));
+    };
   }
   
   //// Processing functions ////
   
   function trim(z){
     return N(trimr(A(z)), trimr(B(z)));
+  }
+  
+  function byzero(z, p){
+    return byzeror(A(z), p) && byzeror(B(z), p);
+  }
+  
+  function diffbyzero(z, w, p){
+    return byzero(sub(z, w), p);
   }
   
   //// Predicates ////
@@ -292,11 +327,11 @@
   }
   
   function re(z){
-    return N(A(z), zeror());
+    return Nreal(A(z));
   }
   
   function im(z){
-    return N(B(z), zeror());
+    return Nreal(B(z));
   }
   
   function conj(z){
@@ -318,7 +353,9 @@
   
   function ln(z, p){
     if (p == udf)p = prec();
-    return N(lnr(A(abs(z, p+2)), p),
+    return N(mulr(lnr(addr(mulr(A(z), A(z)),
+                           mulr(B(z), B(z)), p+4), 
+                      p+2), halfr(), p),
              A(arg(z, p)));
   }
   
@@ -329,8 +366,8 @@
     a = A(z); b = B(z);
     c = A(w); d = B(w);
     
-    if (zeropr(b) && zeropr(d) && (intpr(c) || !negpr(a))){
-      return N(powr(a, c, p), zeror());
+    if (realp(z) && realp(w) && (intpr(c) || !negpr(a))){
+      return Nreal(powr(a, c, p));
     }
     
     var n = Math.ceil(Math.abs(tonumr(c))*siz(addr(absr(a), absr(b)))+2*Math.abs(tonumr(d)));
@@ -339,6 +376,119 @@
     return exp(pd, p);
   }
   
+  // @param cmpl n
+  function root(n, z, p){
+    if (p == udf)p = prec();
+    
+    // if z is real and n is real and odd, return real root
+    if (realp(z) && realp(n) && oddpr(A(n))){
+      var c = A(z);
+      var a = A(n);
+      return N(wnegr(negpr(c),
+                     powr(absr(c),
+                          divr(oner(), a, p+2),
+                          p)),
+               zeror());
+    }
+    
+    return pow(z, div(one(), n, p+2), p);
+  }
+  
+  function sqrt(z, p){
+    if (p == udf)p = prec();
+    
+    var a, b;
+    a = A(z); b = B(z);
+    
+    var absz = A(abs(z, p+4));
+    return N(sqrtr(mulr(addr(absz, a), halfr(), p+2), p),
+             wnegr(negpr(b), sqrtr(mulr(subr(absz, a), halfr(), p+2), p)));
+  }
+  
+  function cbrt(z, p){
+    return root(mknum("3"), z, p);
+  }
+  
+  
+  function sin(z, p){
+    if (p == udf)p = prec();
+    
+    var a, b;
+    a = A(z); b = B(z);
+    
+    var cosh = coshr(b, p+2);
+    var sinh = sinhr(b, p+2);
+    return N(mulr(sinr(a, p+2+siz(cosh)), cosh, p),
+             mulr(cosr(a, p+2+siz(sinh)), sinh, p));
+  }
+  
+  function cos(z, p){
+    if (p == udf)p = prec();
+    
+    var a, b;
+    a = A(z); b = B(z);
+    
+    var cosh = coshr(b, p+2);
+    var sinh = sinhr(b, p+2);
+    return N(mulr(cosr(a, p+2+siz(cosh)), cosh, p),
+             negr(mulr(sinr(a, p+2+siz(sinh)), sinh, p)));
+  }
+  
+  function sinh(z, p){
+    if (p == udf)p = prec();
+    
+    var a, b;
+    a = A(z); b = B(z);
+    
+    var sinh = sinhr(a, p+2);
+    var cosh = coshr(a, p+2);
+    return N(mulr(sinh, cosr(b, p+2+siz(sinh)), p),
+             mulr(cosh, sinr(b, p+2+siz(cosh)), p));
+  }
+  
+  function cosh(z, p){
+    if (p == udf)p = prec();
+    
+    var a, b;
+    a = A(z); b = B(z);
+    
+    var cosh = coshr(a, p+2);
+    var sinh = sinhr(a, p+2);
+    return N(mulr(cosh, cosr(b, p+2+siz(cosh)), p),
+             mulr(sinh, sinr(b, p+2+siz(sinh)), p));
+  }
+  
+  var atan2 = mkrealfn(atan2r);
+  
+  //// Other functions ////
+  
+  var fact = mkrealfn(factr);
+  var bin = mkrealfn(binr);
+  
+  // http://en.wikipedia.org/wiki/Arithmetic%E2%80%93geometric_mean
+  function agm(z, w, p){
+    if (p == udf)p = prec();
+    if (p == -inf)return zero();
+    
+    var s, t;
+    while (true){
+      s = mul(add(z, w), half(), p+2);
+      t = sqrt(mul(z, w), p+2);
+      if (diffbyzero(z, s, p))break;
+      z = s; w = t;
+    }
+    
+    return rnd(s, p);
+  }
+  
+  //// Mathematical constants ////
+  
+  var pi = mkrealfn(pir);
+  var e = mkrealfn(er);
+  var phi = mkrealfn(phir);
+  var ln2 = mkrealfn(ln2r);
+  var ln5 = mkrealfn(ln5r);
+  var ln10 = mkrealfn(ln10r);
   
   //// C object exposure ////
   
@@ -354,6 +504,10 @@
     num: N,
     getA: A,
     getB: B,
+    Nreal: Nreal,
+    zero: zero,
+    one: one,
+    half: half,
     cmplp: cmplp,
     
     trim: trim,
@@ -385,7 +539,28 @@
     
     exp: exp,
     ln: ln,
-    pow: pow
+    pow: pow,
+    root: root,
+    sqrt: sqrt,
+    cbrt: cbrt,
+    
+    sin: sin,
+    cos: cos,
+    sinh: sinh,
+    cosh: cosh,
+    
+    atan2: atan2,
+    
+    fact: fact,
+    bin: bin,
+    agm: agm,
+    
+    pi: pi,
+    e: e,
+    phi: phi,
+    ln2: ln2,
+    ln5: ln5,
+    ln10: ln10
   };
   
   if (nodep)module.exports = C;
