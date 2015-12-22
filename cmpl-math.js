@@ -1,6 +1,6 @@
 /***** Complex Number Math Library 2.0.0 *****/
 
-/* require tools 4.10.3 */
+/* require tools 4.12.0 */
 /* require prec-math 5.0.0 */
 
 (function (udf){
@@ -14,6 +14,8 @@
   var typ = $.T.typ;
   var isa = $.T.isa;
   var tagp = $.T.tagp;
+  
+  var addDspFn = $.addDspFn;
   
   var pos = $.pos;
   var pol = $.pol;
@@ -141,7 +143,7 @@
     if (cmplp(z))return trim(z);
     z = realr(z);
     if (z === false)return false;
-    return N(z, zeror());
+    return Nreal(z);
   }
   
   function cmplreal(z){
@@ -151,7 +153,7 @@
     }
     z = realr(z);
     if (z === false)return false;
-    return N(z, zeror());
+    return Nreal(z);
   }
   
   function real(a){
@@ -181,6 +183,10 @@
     if (zeropr(a))return sign?"-"+im:im;
     return re + (sign?"-":"+") + im;
   }
+  
+  addDspFn("cmpl", function (a){
+    return "<cmpl " + tostr(a) + ">";
+  });
   
   //// Builders ////
 
