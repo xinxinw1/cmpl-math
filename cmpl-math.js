@@ -1,37 +1,60 @@
-/***** Complex Number Math Library 1.2.4 *****/
+/***** Complex Number Math Library 2.0.0 *****/
 
-/* require tools 4.1.5 */
-/* require prec-math 4.2.1 */
+/* require tools 4.12.0 */
+/* require prec-math 5.0.0 */
 
 (function (udf){
   ////// Import //////
   
+  var nodep = $.nodep;
+  var inf = Infinity;
   var num = Number;
   var str = String;
   
-  var nodep = $.nodep;
+  var typ = $.T.typ;
+  var isa = $.T.isa;
+  var tagp = $.T.tagp;
   
-  var arrp = $.arrp;
-  var len = $.len;
+  var addDspFn = $.addDspFn;
   
-  var al = $.al;
-  var spd = $.spd;
+  var pos = $.pos;
+  var pol = $.pol;
+  var len = $.len_;
+  var las = $.las_;
+  var sli = $.sliStr;
+  
+  var apl = $.apl;
   
   var err = $.err;
+  
+  var mknumr = R.mknum;
+  var tostrr = R.tostr;
+  var tonumr = R.tonum;
   
   var realr = R.real;
   var realintr = R.realint;
   
-  var vldpr = R.vldp;
+  var prec = R.prec;
+  
   var trimr = R.trim;
-  
-  var negp = R.negp;
-  var intp = R.intp;
-  var oddp = R.oddp;
-  
-  var sign = R.sign;
   var siz = R.siz;
   var nsiz = R.nsiz;
+  var wnegr = R.wneg;
+  var byzeror = R.byzero;
+  
+  var zeror = R.zero;
+  var oner = R.one;
+  var twor = R.two;
+  var halfr = R.half;
+  
+  var zeropr = R.zerop;
+  var onepr = R.onep;
+  var negpr = R.negp;
+  var intpr = R.intp;
+  var oddpr = R.oddp;
+  
+  var absr = R.abs;
+  var negr = R.neg;
   
   var addr = R.add;
   var subr = R.sub;
@@ -47,18 +70,16 @@
   var lnr = R.ln;
   var powr = R.pow;
   var sqrtr = R.sqrt;
-  var factr = R.fact;
-  var binr = R.bin;
-  var agmr = R.agm;
   var sinr = R.sin;
   var cosr = R.cos;
   var sinhr = R.sinh;
   var coshr = R.cosh;
+  
   var atanr = R.atan;
   var atan2r = R.atan2;
   
-  var negr = R.neg;
-  var absr = R.abs;
+  var factr = R.fact;
+  var binr = R.bin;
   
   var pir = R.pi;
   var er = R.e;
@@ -66,9 +87,6 @@
   var ln2r = R.ln2;
   var ln5r = R.ln5;
   var ln10r = R.ln10;
-  
-  var prec = R.gprec;
-  var log = R.log;
   
   ////// Javascript number constants //////
   
@@ -80,25 +98,66 @@
   
   //// Converters ////
   
+  function mknum(s){
+    var p, a, b;
+    p = pos("+", s); // should be at most one +
+    if (p != -1){
+      // 5+i
+      // 5+2i
+      a = sli(s, 0, p);
+      b = sli(s, p+1, len(s)-1);
+      if (b == "")b += "1";
+    } else {
+      p = pol("-", s);
+      if (p != -1 && p != 0){
+        // 5-i
+        // 5-2i
+        // -5-i
+        // -5-2i
+        a = sli(s, 0, p);
+        b = sli(s, p, len(s)-1);
+        if (b == "-")b += "1";
+      } else {
+        // no + or - or - is at start
+        // 25, -25, i, -i, 5i, -5i
+        if (las(s) == "i"){
+          // i, -i, 5i, -5i
+          a = "0";
+          b = sli(s, 0, len(s)-1);
+          if (b == "-" || b == "")b += "1";
+        } else {
+          // 25, -25
+          a = s;
+          b = "0";
+        }
+      }
+    }
+    return mknum2(a, b);
+  }
+  
+  function mknum2(a, b){
+    return N(mknumr(a), mknumr(b));
+  }
+  
   function cmpl(z){
-    if (vldp(z))return trim(z);
+    if (cmplp(z))return trim(z);
     z = realr(z);
     if (z === false)return false;
-    return N(z, "0");
+    return Nreal(z);
   }
   
   function cmplreal(z){
-    if (vldp(z)){
+    if (cmplp(z)){
       if (realp(z))return trim(z);
       return false;
     }
     z = realr(z);
     if (z === false)return false;
-    return N(z, "0");
+    return Nreal(z);
   }
   
   function real(a){
-    if (vldp(a)){
+    if (cmplp(a)){
       if (realp(a))return A(a);
       return false;
     }
@@ -106,69 +165,96 @@
   }
   
   function realint(a){
-    if (vldp(a)){
+    if (cmplp(a)){
       if (realp(a))return realintr(A(a));
       return false;
     }
     return realintr(a);
   }
   
-  //// Validators ////
-  
-  function vldp(z){
-    return arrp(z) && len(z) == 2 && vldpr(z[0]) && vldpr(z[1]);
-  }
-  
-  /*! All comp num functions past here assumes all inputs are validated !*/
-  
-  //// [a, b] functions ////
-  
-  function N(a, b){
-    return [a, b];
-  }
-  
-  function A(z){
-    return z[0];
-  }
-  
-  function B(z){
-    return z[1];
-  }
-  
-  function dsp(z){
-    if (z == "")return z;
-    var re = A(z);
-    var b = B(z);
-    var im = absr(b);
-    switch (im){
-      case "0": return re;
-      case "1": im = "i"; break;
-      default: im += "i"; break;
-    }
-    var sign = negp(b);
-    if (re == "0")return sign?"-"+im:im;
+  function tostr(z){
+    if (z == "")err(tostr, "Something happened");
+    var a = A(z); var b = B(z);
+    var re = tostrr(a);
+    if (zeropr(b))return re;
+    var sign = negpr(b);
+    var b = absr(b);
+    var im = onepr(b)?"i":tostrr(b) + "i";
+    if (zeropr(a))return sign?"-"+im:im;
     return re + (sign?"-":"+") + im;
   }
   
-  //// Canonicalizers ////
+  addDspFn("cmpl", function (a){
+    return "<cmpl " + tostr(a) + ">";
+  });
+  
+  //// Builders ////
+
+  function N(a, b){
+    return {a: a, b: b, type: "cmpl"};
+  }
+  
+  function A(z){
+    return z.a;
+  }
+  
+  function B(z){
+    return z.b;
+  }
+  
+  function Nreal(a){
+    return N(a, zeror());
+  }
+
+  function zero(){
+    return Nreal(zeror());
+  }
+  
+  function one(){
+    return Nreal(oner());
+  }
+  
+  function half(){
+    return Nreal(halfr());
+  }
+  
+  function cmplp(a){
+    return tagp(a) && isa("cmpl", a);
+  }
+  
+  function mkrealfn(f){
+    return function (){
+      return Nreal(apl(f, arguments));
+    };
+  }
+  
+  //// Processing functions ////
   
   function trim(z){
     return N(trimr(A(z)), trimr(B(z)));
   }
   
-  //// is... functions ////
-  
-  function realp(z){
-    return B(z) == "0";
+  function byzero(z, p){
+    return byzeror(A(z), p) && byzeror(B(z), p);
   }
   
-  /*! All comp num functions past here assumes all inputs are trimmed !*/
+  function diffbyzero(z, w, p){
+    return byzero(sub(z, w), p);
+  }
   
-  function intpc(z){
+  //// Predicates ////
+  
+  function realp(z){
+    return zeropr(B(z));
+  }
+  
+  function intp(z){
     return realp(z) && intp(A(z));
   }
   
-  //// Processing functions ////
+  function zerop(z){
+    return zeropr(A(z)) && zeropr(B(z));
+  }
   
   //// Basic operation functions ////
   
@@ -193,18 +279,17 @@
   
   function div(z, w, p){
     if (p == udf)p = prec();
+    if (zerop(w))err(div, "w cannot be 0");
     
     var a, b, c, d;
     a = A(z); b = B(z);
     c = A(w); d = B(w);
     
-    if (c == "0" && d == "0")err(div, "w cannot be 0");
-    
-    var sum = addr(powr(c, "2"), powr(d, "2"));
+    var sum = addr(mulr(c, c), mulr(d, d));
     return N(divr(addr(mulr(a, c), mulr(b, d)), sum, p),
              divr(subr(mulr(b, c), mulr(a, d)), sum, p));
   }
-  
+
   //// Rounding functions ////
   
   function rnd(z, p){
@@ -227,6 +312,38 @@
              trnr(B(z), p));
   }
   
+  //// Other operation functions ////
+  
+  function abs(z, p){
+    if (p == udf)p = prec();
+    return N(sqrtr(addr(mulr(A(z), A(z)),
+                        mulr(B(z), B(z))), p), zeror());
+  }
+  
+  function arg(z, p){
+    if (p == udf)p = prec();
+    if (zerop(z))return zero();
+    return N(atan2r(B(z), A(z), p), zeror());
+  }
+  
+  function sgn(z, p){
+    if (p == udf)p = prec();
+    if (zerop(z))return z;
+    return div(z, abs(z, p+2), p);
+  }
+  
+  function re(z){
+    return Nreal(A(z));
+  }
+  
+  function im(z){
+    return Nreal(B(z));
+  }
+  
+  function conj(z){
+    return N(A(z), negr(B(z)));
+  }
+  
   //// Extended operation functions ////
   
   function exp(z, p){
@@ -242,7 +359,9 @@
   
   function ln(z, p){
     if (p == udf)p = prec();
-    return N(lnr(A(abs(z, p+2)), p),
+    return N(mulr(lnr(addr(mulr(A(z), A(z)),
+                           mulr(B(z), B(z)), p+4), 
+                      p+2), halfr(), p),
              A(arg(z, p)));
   }
   
@@ -253,27 +372,32 @@
     a = A(z); b = B(z);
     c = A(w); d = B(w);
     
-    if (b == "0" && d == "0" && (intp(c) || !negp(a))){
-      return N(powr(a, c, p), "0");
+    if (realp(z) && realp(w) && (intpr(c) || !negpr(a))){
+      return Nreal(powr(a, c, p));
     }
     
-    var n = Math.ceil(Math.abs(num(c))*siz(str(Math.abs(num(a))+Math.abs(num(b))))+2*Math.abs(num(d)));
+    var n = Math.ceil(Math.abs(tonumr(c))*siz(addr(absr(a), absr(b)))+2*Math.abs(tonumr(d)));
     
     var pd = mul(w, ln(z, p+n+4), p+n+2);
     return exp(pd, p);
   }
   
-  // @param String n
+  // @param cmpl n
   function root(n, z, p){
     if (p == udf)p = prec();
     
-    // if z is real and n is odd, return real root
-    if (B(z) == "0" && oddp(n)){
+    // if z is real and n is real and odd, return real root
+    if (realp(z) && realp(n) && oddpr(A(n))){
       var c = A(z);
-      return N(sign(c) + powr(absr(c), divr("1", n, p+2), p), "0");
+      var a = A(n);
+      return N(wnegr(negpr(c),
+                     powr(absr(c),
+                          divr(oner(), a, p+2),
+                          p)),
+               zeror());
     }
     
-    return pow(z, N(divr("1", n, p+2), "0"), p);
+    return pow(z, div(one(), n, p+2), p);
   }
   
   function sqrt(z, p){
@@ -283,25 +407,14 @@
     a = A(z); b = B(z);
     
     var absz = A(abs(z, p+4));
-    return N(sqrtr(divr(addr(a, absz), "2", p+2), p),
-             sign(b) + sqrtr(divr(addr(negr(a), absz), "2", p+2), p));
+    return N(sqrtr(mulr(addr(absz, a), halfr(), p+2), p),
+             wnegr(negpr(b), sqrtr(mulr(subr(absz, a), halfr(), p+2), p)));
   }
   
   function cbrt(z, p){
-    return root("3", z, p);
+    return root(mknum("3"), z, p);
   }
   
-  function fact(x, p){
-    return N(factr(x, p), "0");
-  }
-  
-  function bin(x, y, p){
-    return N(binr(x, y, p), "0");
-  }
-  
-  function agm(x, y, p){
-    return N(agmr(x, y, p), "0");
-  }
   
   function sin(z, p){
     if (p == udf)p = prec();
@@ -351,81 +464,62 @@
              mulr(sinh, sinr(b, p+2+siz(sinh)), p));
   }
   
-  //// Other operation functions ////
+  var atan2 = mkrealfn(atan2r);
   
-  function abs(z, p){
+  //// Other functions ////
+  
+  var fact = mkrealfn(factr);
+  var bin = mkrealfn(binr);
+  
+  // http://en.wikipedia.org/wiki/Arithmetic%E2%80%93geometric_mean
+  function agm(z, w, p){
     if (p == udf)p = prec();
-    return N(sqrtr(addr(powr(A(z), "2"),
-                        powr(B(z), "2")), p), "0");
-  }
-  
-  function arg(z, p){
-    if (p == udf)p = prec();
-    return N(atan2r(B(z), A(z), p), "0");
-  }
-  
-  function sgn(z, p){
-    if (p == udf)p = prec();
-    if (A(z) == "0" && B(z) == "0")return z;
-    return div(z, abs(z, p+2), p);
-  }
-  
-  function re(z){
-    return N(A(z), "0");
-  }
-  
-  function im(z){
-    return N(B(z), "0");
-  }
-  
-  function conj(z){
-    return N(A(z), negr(B(z)));
+    if (p == -inf)return zero();
+    
+    var s, t;
+    while (true){
+      s = mul(add(z, w), half(), p+2);
+      t = sqrt(mul(z, w), p+2);
+      if (diffbyzero(z, s, p))break;
+      z = s; w = t;
+    }
+    
+    return rnd(s, p);
   }
   
   //// Mathematical constants ////
   
-  function pi(p){
-    return N(pir(p), "0");
-  }
-  
-  function e(p){
-    return N(er(p), "0");
-  }
-  
-  function phi(p){
-    return N(phir(p), "0");
-  }
-  
-  function ln2(p){
-    return N(ln2r(p), "0");
-  }
-  
-  function ln5(p){
-    return N(ln5r(p), "0");
-  }
-  
-  function ln10(p){
-    return N(ln10r(p), "0");
-  }
+  var pi = mkrealfn(pir);
+  var e = mkrealfn(er);
+  var phi = mkrealfn(phir);
+  var ln2 = mkrealfn(ln2r);
+  var ln5 = mkrealfn(ln5r);
+  var ln10 = mkrealfn(ln10r);
   
   //// C object exposure ////
   
   var C = {
+    mknum: mknum,
+    mknum2: mknum2,
     cmpl: cmpl,
     cmplreal: cmplreal,
     real: real,
     realint: realint,
-    
-    vldp: vldp,
-    trim: trim,
-    
-    realp: realp,
-    intp: intpc,
+    tostr: tostr,
     
     num: N,
     getA: A,
     getB: B,
-    dsp: dsp,
+    Nreal: Nreal,
+    zero: zero,
+    one: one,
+    half: half,
+    cmplp: cmplp,
+    
+    trim: trim,
+    
+    realp: realp,
+    intp: intp,
     
     add: add,
     sub: sub,
@@ -442,26 +536,30 @@
     floor: flr,
     trunc: trn,
     
-    exp: exp,
-    ln: ln,
-    pow: pow,
-    root: root,
-    sqrt: sqrt,
-    cbrt: cbrt,
-    fact: fact,
-    bin: bin,
-    agm: agm,
-    sin: sin,
-    cos: cos,
-    sinh: sinh,
-    cosh: cosh,
-    
     abs: abs,
     arg: arg,
     sgn: sgn,
     re: re,
     im: im,
     conj: conj,
+    
+    exp: exp,
+    ln: ln,
+    pow: pow,
+    root: root,
+    sqrt: sqrt,
+    cbrt: cbrt,
+    
+    sin: sin,
+    cos: cos,
+    sinh: sinh,
+    cosh: cosh,
+    
+    atan2: atan2,
+    
+    fact: fact,
+    bin: bin,
+    agm: agm,
     
     pi: pi,
     e: e,
