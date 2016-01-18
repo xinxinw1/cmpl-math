@@ -1,4 +1,4 @@
-/***** Complex Number Math Library 2.0.0 *****/
+/***** Complex Number Math Library 2.0.1 *****/
 
 /* require tools 4.12.0 */
 /* require prec-math 5.0.0 */
@@ -24,6 +24,8 @@
   var sli = $.sliStr;
   
   var apl = $.apl;
+  
+  var worig = $.worig;
   
   var err = $.err;
   
@@ -223,9 +225,9 @@
   }
   
   function mkrealfn(f){
-    return function (){
+    return worig(f, function (){
       return Nreal(apl(f, arguments));
-    };
+    });
   }
   
   //// Processing functions ////
