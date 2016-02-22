@@ -11,11 +11,11 @@
   var num = Number;
   var str = String;
   
-  var typ = $.T.typ;
-  var isa = $.T.isa;
-  var tagp = $.T.tagp;
+  var typ = $.typ;
+  var isa = $.isa;
+  var tagp = $.tagp;
   
-  var addDspFn = $.addDspFn;
+  var setDspFn = $.setDspFn;
   
   var pos = $.pos;
   var pol = $.pol;
@@ -186,7 +186,7 @@
     return re + (sign?"-":"+") + im;
   }
   
-  addDspFn("cmpl", function (a){
+  setDspFn("cmpl", function (a){
     return "<cmpl " + tostr(a) + ">";
   });
   
