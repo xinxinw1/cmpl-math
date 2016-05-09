@@ -1,22 +1,3 @@
-QUnit.assert.testnum = function (a, neg, dat, exp){
-  this.same(a.neg, neg, 'testing neg of ' + $.dspSimp(a));
-  this.same(a.dat, dat, 'testing dat of ' + $.dspSimp(a));
-  this.same(a.exp, exp, 'testing exp of ' + $.dspSimp(a));
-};
-
-QUnit.assert.teststr = function (a, x){
-  this.same(R.tostr(a), x, 'testing tostr of ' + $.dspSimp(a));
-};
-
-QUnit.assert.testcmpl = function (z, a, b){
-  this.teststr(C.getA(z), a, 'testing real part of ' + $.dspSimp(z));
-  this.teststr(C.getB(z), b, 'testing imag part of ' + $.dspSimp(z));
-};
-
-QUnit.assert.testcstr = function (a, x){
-  this.same(C.tostr(a), x, 'testing tostr of ' + $.dspSimp(a));
-};
-
 QUnit.test('Converters', function (assert){
   assert.testcmpl(C.mknum2("1", "0.4352"), "1", "0.4352");
   assert.testcmpl(C.mknum2("-1", "0"), "-1", "0");
