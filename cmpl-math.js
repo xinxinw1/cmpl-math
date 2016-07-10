@@ -1,7 +1,7 @@
-/***** Complex Number Math Library 2.0.1 *****/
+/***** Complex Number Math Library *****/
 
-/* require tools 4.12.0 */
-/* require prec-math 5.0.0 */
+/* require tools */
+/* require prec-math */
 
 (function (udf){
   ////// Import //////
@@ -82,7 +82,9 @@
   
   var factr = R.fact;
   var binr = R.bin;
+  var quor = R.quo;
   var modr = R.mod;
+  var gcdr = R.gcd;
   
   var pir = R.pi;
   var er = R.e;
@@ -473,7 +475,9 @@
   
   var fact = mkrealfn(factr);
   var bin = mkrealfn(binr);
+  var quo = mkrealfn(quor);
   var mod = mkrealfn(modr);
+  var gcd = mkrealfn(gcdr);
   
   // http://en.wikipedia.org/wiki/Arithmetic%E2%80%93geometric_mean
   function agm(z, w, p){
@@ -563,7 +567,10 @@
     
     fact: fact,
     bin: bin,
+    quo: quo,
+    rem: mod,
     mod: mod,
+    gcd: gcd,
     agm: agm,
     
     pi: pi,
