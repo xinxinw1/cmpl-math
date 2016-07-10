@@ -495,6 +495,8 @@
     return rnd(s, p);
   }
   
+  var rand = mkrealfn(R.rand);
+  
   //// Mathematical constants ////
   
   var pi = mkrealfn(pir);
@@ -572,6 +574,8 @@
     mod: mod,
     gcd: gcd,
     agm: agm,
+    
+    rand: rand,
     
     pi: pi,
     e: e,
