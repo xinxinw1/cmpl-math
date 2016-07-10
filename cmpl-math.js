@@ -82,6 +82,7 @@
   
   var factr = R.fact;
   var binr = R.bin;
+  var modr = R.mod;
   
   var pir = R.pi;
   var er = R.e;
@@ -472,6 +473,7 @@
   
   var fact = mkrealfn(factr);
   var bin = mkrealfn(binr);
+  var mod = mkrealfn(modr);
   
   // http://en.wikipedia.org/wiki/Arithmetic%E2%80%93geometric_mean
   function agm(z, w, p){
@@ -561,6 +563,7 @@
     
     fact: fact,
     bin: bin,
+    mod: mod,
     agm: agm,
     
     pi: pi,
