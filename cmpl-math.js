@@ -477,6 +477,7 @@
   var bin = mkrealfn(binr);
   var quo = mkrealfn(quor);
   var mod = mkrealfn(modr);
+  var modPow = mkrealfn(R.modPow);
   var gcd = mkrealfn(gcdr);
   
   // http://en.wikipedia.org/wiki/Arithmetic%E2%80%93geometric_mean
@@ -572,6 +573,7 @@
     quo: quo,
     rem: mod,
     mod: mod,
+    modPow: modPow,
     gcd: gcd,
     agm: agm,
     
