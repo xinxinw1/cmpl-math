@@ -48,12 +48,12 @@ QUnit.test('Converters', function (assert){
   assert.same(C.cmplreal("aefwef"), false);
   assert.same(C.cmplreal(C.mknum("1-i")), false);
   
-  assert.testnum(C.real(C.mknum("-000234.432")), true, "234432", -3);
+  assert.testnum(C.real(C.mknum("-000234.432")), true, R.strToArr("234432"), -3);
   assert.same(C.real(C.mknum("-000234.432+i")), false);
   assert.same(C.real(C.mknum("-000234.432+0.000001i")), false);
-  assert.testnum(C.real(234), false, "234", 0);
-  assert.testnum(C.real("-0234034.000"), true, "234034", 0);
-  assert.testnum(C.real("0234034.0001"), false, "2340340001", -4);
+  assert.testnum(C.real(234), false, R.strToArr("234"), 0);
+  assert.testnum(C.real("-0234034.000"), true, R.strToArr("234034"), 0);
+  assert.testnum(C.real("0234034.0001"), false, R.strToArr("2340340001"), -4);
   
   
   assert.same(C.realint(C.mknum("-000234.432")), false);
