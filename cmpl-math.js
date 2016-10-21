@@ -531,6 +531,7 @@
     
     realp: realp,
     intp: intp,
+    zerop: zerop,
     
     add: add,
     sub: sub,
