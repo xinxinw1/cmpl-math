@@ -371,8 +371,6 @@
   }
   
   function pow(z, w, p){
-    if (p == udf)p = prec();
-    
     var a, b, c, d;
     a = A(z); b = B(z);
     c = A(w); d = B(w);
@@ -380,6 +378,8 @@
     if (realp(z) && realp(w) && (intpr(c) || !negpr(a))){
       return Nreal(powr(a, c, p));
     }
+    
+    if (p == udf)p = prec();
     
     var n = Math.ceil(Math.abs(tonumr(c))*siz(addr(absr(a), absr(b)))+2*Math.abs(tonumr(d)));
     
