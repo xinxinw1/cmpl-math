@@ -11,6 +11,8 @@
   var num = Number;
   var str = String;
   
+  var udfp = $.udfp;
+  
   var typ = $.typ;
   var isa = $.isa;
   var tagp = $.tagp;
@@ -379,12 +381,32 @@
       return Nreal(powr(a, c, p));
     }
     
+    if (realp(w) && intpr(c) && !negpr(c) && ((intpr(a) && intpr(b)) || p == udf)) {
+      return powExact(z, tonumr(c), p);
+    }
+    
     if (p == udf)p = prec();
     
     var n = Math.ceil(Math.abs(tonumr(c))*siz(addr(absr(a), absr(b)))+2*Math.abs(tonumr(d)));
     
     var pd = mul(w, ln(z, p+n+4), p+n+2);
     return exp(pd, p);
+  }
+  
+  // http://en.wikipedia.org/wiki/Exponentiation_by_squaring
+  // @param real a
+  // @param num n
+  function powExact(a, n, p){
+    var prod = one();
+    while (n > 0){
+      if (n % 2 == 1){
+        prod = mul(prod, a);
+        n--;
+      }
+      a = mul(a, a);
+      n = n/2;
+    }
+    return udfp(p)?prod:rnd(prod, p);
   }
   
   // @param cmpl n
