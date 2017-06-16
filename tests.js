@@ -174,6 +174,7 @@ QUnit.test('pow', function (assert){
   assert.testcstr(C.pow(C.mknum("5+4i"), C.mknum("-3+2i"), 16), "-0.0001168546805998+0.0009810531656381i");
   assert.testcstr(C.pow(C.mknum("0.01"), C.mknum("20")), "0.0000000000000000000000000000000000000001");
   assert.testcstr(C.pow(C.mknum("i"), C.mknum("1000000")), "1");
+  assert.testcstr(C.pow(C.mknum("1.1"), C.mknum("1")), "1.1");
   
   
   //if (slow){
